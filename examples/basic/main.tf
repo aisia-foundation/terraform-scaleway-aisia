@@ -39,7 +39,7 @@ module "aisia_scaleway_k8s" {
 
   org_id      = "acme"
   service_key = "C1"
-  image_tag   = "v6.12.25"
+  image_tag   = "v6.12.26"
   tier        = "saas"
 
   region       = "fr-par"
@@ -62,7 +62,7 @@ module "aisia_scaleway_k8s" {
 # module "aisia_app" {
 #   source  = "app.terraform.io/AISIA/aisia-cluster/kubernetes"
 #   version = "~> 1.0"
-#   image_tag = "v6.12.25"
+#   image_tag = "v6.12.26"
 #   tier      = "saas"
 #   domain    = "acme.aisia.fr"
 # }
