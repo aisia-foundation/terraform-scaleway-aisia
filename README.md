@@ -8,7 +8,7 @@
 
 # terraform-scaleway-aisia
 
-> **v6.12.65** — module registry — bootstrap Scaleway + substrat AISIA
+> **v6.12.69** — module registry — bootstrap Scaleway + substrat AISIA
 
 ## Cœur d'AISIA (identité produit)
 
@@ -21,9 +21,10 @@ puis cloud si nécessaire — via `BanditRouter`, pas un simple reverse-proxy.
 
 | vs proxy LLM | AISIA |
 |--------------|-------|
-| 1 provider fixe | **88** providers + **58** modèles locaux |
+| 1 provider fixe | **88** providers déclarés |
+| Catalogue modèles | **3275** modèles catalogue · **115** locaux déclarés · **58** locaux actifs |
 | Stateless | Qdrant + audit AI Act + multi-tenant |
-| SaaS opaque | Déployable Swarm/K8s — **v6.12.65** LIVE |
+| SaaS opaque | Déployable Swarm/K8s — **v6.12.69** LIVE |
 
 Documentation : [README racine](../../../../README.md) ·
 [Product Identity](../../../../specification/03-Project-State/Product-Identity-AISIA.md)
@@ -72,7 +73,7 @@ module "aisia_scw" {
 
   org_id      = "acme"
   service_key = "C1"
-  image_tag   = "v6.12.65"
+  image_tag   = "v6.12.69"
   tier        = "saas"
 
   region      = "fr-par"
@@ -85,7 +86,7 @@ module "aisia_app" {
   source  = "app.terraform.io/AISIA/aisia-cluster/kubernetes"
   version = "~> 1.0"
 
-  image_tag = "v6.12.65"
+  image_tag = "v6.12.69"
   tier      = "saas"
   domain    = "acme.aisia.fr"
 }
@@ -102,7 +103,7 @@ module "aisia_app" {
 | `profile` | Profil de dimensionnement (S \| M \| L \| XL) | `string` | `"S"` | non |
 | `node_count` | Nombre de nœuds du pool principal Kapsule | `number` | `1` | non |
 | `image_registry` | Registry des images AISIA | `string` | `"registry.aisia.fr"` | non |
-| `image_tag` | Tag d'image AISIA à déployer | `string` | `"v6.12.65"` | non |
+| `image_tag` | Tag d'image AISIA à déployer | `string` | `"v6.12.69"` | non |
 | `domain` | Domaine custom (vide = *.aisia.fr) | `string` | `""` | non |
 | `tier` | Offre tarifaire (saas \| baas \| paas) | `string` | `"saas"` | non |
 | `gpu_enabled` | Provisionner un pool GPU Kapsule | `bool` | `false` | non |
@@ -142,6 +143,41 @@ module "aisia_app" {
 ## Référence des variables & sorties (auto-générée)
 
 <!-- BEGIN_TF_DOCS -->
+### Inputs (parité `variables.tf`)
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `org_id` | `string` | `—` | Identifiant de l'organisation AISIA (tenant). |
+| `service_key` | `string` | `—` | Brique déployée (C1..C11). |
+| `runtime_kind` | `string` | `"compute"` | edge | compute | compute-gpu | data | ops | security. |
+| `substrate` | `string` | `"k8s"` | Substrat cible. Ce module provisionne le substrat 'k8s' (Kapsule). |
+| `profile` | `string` | `"S"` | Profil de dimensionnement (S | M | L | XL). |
+| `node_count` | `number` | `1` | Nombre de nœuds du pool Kapsule principal. |
+| `image_registry` | `string` | `"registry.aisia.fr"` | Registry des images AISIA (utilisé pour les tags Kapsule ; app via terraform-aisia-cluster). |
+| `image_tag` | `string` | `"v6.12.69"` | Tag d'image AISIA à déployer (ex. v6.12.69). |
+| `domain` | `string` | `""` | Domaine custom de l'org (vide = *.aisia.fr). |
+| `tier` | `string` | `"saas"` | Offre tarifaire AISIA (saas | baas | paas). |
+| `gpu_enabled` | `bool` | `false` | Provisionner un pool GPU Kapsule (type gpu_node_type par défaut). |
+| `region` | `string` | `"fr-par"` | Région Scaleway Kapsule (fr-par par défaut pour conformité RGPD). |
+| `cluster_name` | `string` | `"aisia-scaleway-k8s"` | Nom logique du cluster Kapsule (préfixe des ressources). |
+| `node_type` | `string` | `"DEV1-M"` | Type d'Instance des nœuds du pool principal (DEV1-M = 3 vCPU / 4 GB ; prod : PRO2-S). |
+| `k8s_version` | `string` | `"1.30"` | Version Kubernetes Kapsule (ex : 1.30). |
+| `cni` | `string` | `"cilium"` | CNI du cluster Kapsule (cilium | calico | flannel | kilo). |
+| `gpu_node_type` | `string` | `"L4-1-24G"` | Type d'Instance GPU du pool optionnel (L4-1-24G, RENDER-S, ...). |
+
+### Outputs (parité `outputs.tf`)
+
+| Name | Description |
+|------|-------------|
+| `cluster_id` | ID du cluster Kapsule. |
+| `cluster_name` | Nom du cluster Kapsule. |
+| `cluster_endpoint` | Endpoint (apiserver_url) du control plane Kapsule. |
+| `kubeconfig` | Kubeconfig complet du cluster Kapsule (sensible — stocker dans un secret). |
+| `cluster_token` | Token d'authentification Kapsule (sensible). |
+| `cluster_ca_certificate` | CA certificate Kapsule (base64). |
+| `region` | Région Scaleway du déploiement. |
+| `node_count` | Taille du pool de nœuds principal. |
+| `gpu_pool_enabled` | Un pool GPU a-t-il été provisionné ? |
 <!-- END_TF_DOCS -->
 
 <!-- TF-MODULE-DOCS:09_publications -->
@@ -151,4 +187,23 @@ module "aisia_app" {
 - **Référence API** : [api.aisia.fr/docs](https://api.aisia.fr/docs)
 - **Provider Terraform** : [aisia-foundation/aisia](https://registry.terraform.io/providers/aisia-foundation/aisia/latest/docs)
 - **Guide d'implémentation** : [getting-started](https://registry.terraform.io/providers/aisia-foundation/aisia/latest/docs/guides/getting-started)
-- **Version LIVE** : **v6.12.65**
+- **Version LIVE** : **v6.12.69**
+
+<!-- TF-REGISTRY-STATUS -->
+## Statut publication registry (honnête)
+
+> Mesuré à la régénération docs · version repo **v6.12.69** (`VERSION` modules + provider).
+
+| Artefact | Repo | Public registry.terraform.io |
+|----------|------|------------------------------|
+| Provider `aisia-foundation/aisia` | `6.12.69` | ⚠️ non mesuré (provider: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1032)>) |
+| Module `terraform-aisia-cluster` (`cluster/aisia`) | `6.12.69` | ⚠️ non mesuré (offline) |
+| Module `terraform-aisia-swarm` (`swarm/aisia`) | `6.12.69` | ⚠️ non mesuré (offline) |
+| Module `terraform-aws-aisia` (`aisia/aws`) | `6.12.69` | ⚠️ non mesuré (offline) |
+| Module `terraform-azure-aisia` (`aisia/azure`) | `6.12.69` | ⚠️ non mesuré (offline) |
+| Module `terraform-google-aisia` (`aisia/google`) | `6.12.69` | ⚠️ non mesuré (offline) |
+| Module `terraform-ovh-aisia` (`aisia/ovh`) | `6.12.69` | ⚠️ non mesuré (offline) |
+| Module `terraform-scaleway-aisia` (`aisia/scaleway`) | `6.12.69` | ⚠️ non mesuré (offline) |
+
+HCP privé (`app.terraform.io/AISIA`) : non interrogé ici (token fondateur). Ne pas écrire « 100 % registry » si une ligne public est absente ou en écart.
+
