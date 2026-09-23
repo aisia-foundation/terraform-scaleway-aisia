@@ -1,5 +1,5 @@
 ###############################################################################
-# AISIA — Multi-cloud Phase 4 partie 2 (sprint v6.13.16)
+# AISIA — Multi-cloud Phase 4 partie 2 (sprint v6.13.18)
 #
 # Module Terraform Scaleway : déploie un cluster Docker Swarm AISIA minimal
 # sur Scaleway Instances (DEV1-M manager + workers).
@@ -31,7 +31,7 @@
 ###############################################################################
 resource "scaleway_vpc_private_network" "aisia" {
   name = "${var.cluster_name}-pn"
-  tags = ["aisia", "swarm", "v6.13.16"]
+  tags = ["aisia", "swarm", "v6.13.18"]
 }
 
 ###############################################################################
@@ -39,15 +39,18 @@ resource "scaleway_vpc_private_network" "aisia" {
 ###############################################################################
 resource "scaleway_instance_security_group" "swarm" {
   name                    = "${var.cluster_name}-sg"
-  description             = "AISIA Swarm cluster (sprint v6.13.16)"
+  description             = "AISIA Swarm cluster (sprint v6.13.18)"
   inbound_default_policy  = "drop"
   outbound_default_policy = "accept"
 
-  inbound_rule {
-    action   = "accept"
-    port     = 22
-    protocol = "TCP"
-    ip_range = var.ssh_allowed_cidr
+  dynamic "inbound_rule" {
+    for_each = var.ssh_allowed_cidr == null ? [] : [var.ssh_allowed_cidr]
+    content {
+      action   = "accept"
+      port     = 22
+      protocol = "TCP"
+      ip_range = inbound_rule.value
+    }
   }
 
   inbound_rule {
@@ -150,7 +153,7 @@ resource "scaleway_instance_server" "manager" {
     size_in_gb = 40
   }
 
-  tags = ["aisia", "swarm-manager", "v6.13.16"]
+  tags = ["aisia", "swarm-manager", "v6.13.18"]
 }
 
 ###############################################################################
@@ -177,5 +180,5 @@ resource "scaleway_instance_server" "worker" {
     size_in_gb = 60
   }
 
-  tags = ["aisia", "swarm-worker", "v6.13.16"]
+  tags = ["aisia", "swarm-worker", "v6.13.18"]
 }
