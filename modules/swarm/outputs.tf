@@ -1,5 +1,5 @@
 ###############################################################################
-# AISIA Terraform Scaleway — outputs (sprint v6.13.18)
+# AISIA Terraform Scaleway — outputs (sprint v6.14.1)
 ###############################################################################
 
 # ── Contrat de sortie normalisé (commun substrat swarm) ────────────────────
