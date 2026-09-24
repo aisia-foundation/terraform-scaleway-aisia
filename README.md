@@ -69,8 +69,8 @@ provider "kubernetes" {
 
 # L1 — substrat Kapsule
 module "aisia_scw" {
-  source  = "app.terraform.io/AISIA/aisia/scaleway"
-  version = "~> 1.0"
+  source  = "aisia-foundation/aisia/scaleway"
+  version = "6.14.1"
 
   org_id      = "acme"
   service_key = "C1"
@@ -84,8 +84,8 @@ module "aisia_scw" {
 
 # L2 — déploiement AISIA
 module "aisia_app" {
-  source  = "app.terraform.io/AISIA/aisia-cluster/kubernetes"
-  version = "~> 1.0"
+  source  = "aisia-foundation/cluster/aisia"
+  version = "6.14.1"
 
   image_tag = "v6.14.1"
   tier      = "saas"
@@ -135,7 +135,7 @@ module "aisia_app" {
 - Provider `scaleway/scaleway ~> 2.40`
 - Credentials Scaleway via env vars `SCW_ACCESS_KEY` / `SCW_SECRET_KEY` /
   `SCW_DEFAULT_ORGANIZATION_ID` / `SCW_DEFAULT_PROJECT_ID`
-- Module `terraform-aisia-cluster ~> 1.0` pour déployer l'application
+- Module `aisia-foundation/cluster/aisia` 6.14.1 pour déployer l'application
 
 ## Licence
 
