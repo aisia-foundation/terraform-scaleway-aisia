@@ -39,7 +39,7 @@ module "aisia_scaleway_k8s" {
 
   org_id      = "acme"
   service_key = "C1"
-  image_tag   = "v6.14.1"
+  image_tag   = "v6.14.2"
   tier        = "saas"
 
   region       = "fr-par"
@@ -62,7 +62,7 @@ module "aisia_scaleway_k8s" {
 # module "aisia_app" {
 #   source  = "aisia-foundation/cluster/aisia"
 #   version = "6.14.1"
-#   image_tag = "v6.14.1"
+#   image_tag = "v6.14.2"
 #   tier      = "saas"
 #   domain    = "acme.aisia.fr"
 # }
