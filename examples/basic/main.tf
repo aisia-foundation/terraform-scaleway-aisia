@@ -34,12 +34,12 @@ provider "scaleway" {
 module "aisia_scaleway_k8s" {
   # Registre HCP privé (nécessite credentials) :
   #   source  = "aisia-foundation/aisia/scaleway"
-  #   version = "6.14.32"
+  #   version = "6.14.33"
   source = "../../"
 
   org_id      = "acme"
   service_key = "C1"
-  image_tag   = "v6.14.32"
+  image_tag   = "v6.14.33"
   tier        = "saas"
 
   region       = "fr-par"
@@ -61,8 +61,8 @@ module "aisia_scaleway_k8s" {
 #
 # module "aisia_app" {
 #   source  = "aisia-foundation/cluster/aisia"
-#   version = "6.14.32"
-#   image_tag = "v6.14.32"
+#   version = "6.14.33"
+#   image_tag = "v6.14.33"
 #   tier      = "saas"
 #   domain    = "acme.aisia.fr"
 # }
